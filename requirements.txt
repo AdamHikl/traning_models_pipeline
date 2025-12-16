@@ -1,15 +1,8 @@
-first install cuda - https://developer.nvidia.com/cuda-downloads
+create a venv and install the following packages:
 
-python -m venv .my-env
-source .my-env/bin/activate
-# Install PyTorch with CUDA
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130
-
-# Transformers, PEFT, datasets, etc.
-pip install transformers
-
-pip3 install datasets>=2.13.0
-pip3 install accelerate>=1.19.0
-pip3 install peft==0.11.1
-pip3 install trl>=0.8.0
-pip3 install sentencepiece
+pip isntall torch
+pip isntall transformers
+pip isntall datasets
+pip isntall peft
+pip isntall bitsandbytes
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
