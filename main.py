@@ -41,7 +41,9 @@ from datetime import datetime
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 # Create output directory with format: ./qwen3_lora_text/character_model_timestamp_
-OUTPUT_DIR = f"./qwen3_lora_text/{character_name}_{MODEL_NAME}_{timestamp}_"
+# Extract just the model name (e.g., "Qwen3-14B") from the full path
+model_short_name = MODEL_NAME.split("/")[-1]
+OUTPUT_DIR = f"./qwen3_lora_text/{character_name}_{model_short_name}_{timestamp}_"
 
 # -------------------------------
 # BITSANDBYTES CONFIG (QLoRA)
