@@ -20,9 +20,9 @@ DATASET_PATH = "./traniningData"
 # List of dataset files to use for training
 # You can add or remove files from this list
 DATASET_FILES = [
-    "20251208_1952_murderOfRogerAckroyd_Hercule_Poirot_raw.json",
+    "20251208_2242_murderOfRogerAckroyd_Hercule_Poirot_raw.json",
     "20251208_2242_murderOnTheOrientExpress_Hercule_Poirot_raw.json",
-    "20251212_2250_deathOnTheNile_Hercule_Poirot_raw.json",
+    "20251208_2242_deathOnTheNile_Hercule_Poirot_raw.json",
 ]
 
 EPOCHS = 2
@@ -115,19 +115,7 @@ dataset = load_dataset(
 )
 
 def format_example(example):
-    prompt = (
-        f"Scene: {example['scene']}\n"
-        f"Interlocutor: {example['interlocutor']}\n"
-        f"Mood: {example['mood']}\n\n"
-        f"{example['character_input']}"
-    )
-
-    response = (
-        f"Reasoning: {example['character_reasoning']}\n\n"
-        f"{example['character_response']}"
-    )
-
-    text = f"<|user|>\n{prompt}\n<|assistant|>\n{response}"
+    text = example['text']
 
     tokenized = tokenizer(
         text,
