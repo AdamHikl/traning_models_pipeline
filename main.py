@@ -38,12 +38,12 @@ character_name = "_".join(dataset_parts[3:])  # e.g., "Hercule_Poirot"
 
 # Create timestamp for output directory
 from datetime import datetime
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+timestamp = datetime.now().strftime("%Y%m%d_%H%M")
 
 # Create output directory with format: ./qwen3_lora_text/character_model_timestamp_
 # Extract just the model name (e.g., "Qwen3-14B") from the full path
 model_short_name = MODEL_NAME.split("/")[-1]
-OUTPUT_DIR = f"./qwen3_lora_text/{character_name}_{model_short_name}_{timestamp}_"
+OUTPUT_DIR = f"./output_adapters/{character_name}_{model_short_name}_{timestamp}_"
 
 # -------------------------------
 # BITSANDBYTES CONFIG (QLoRA)
