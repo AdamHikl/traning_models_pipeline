@@ -18,14 +18,14 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 MODEL_NAME = "Qwen/Qwen3-14B"
 DATASET_PATH = "./traniningData"
 
-# Automatically scan the trainingData folder for all JSON files
-json_pattern = os.path.join(DATASET_PATH, "*.json")
-DATASET_FILES = [os.path.basename(f) for f in sorted(glob.glob(json_pattern))]
+# Automatically scan the trainingData folder for all JSONL files
+jsonl_pattern = os.path.join(DATASET_PATH, "*.jsonl")
+DATASET_FILES = [os.path.basename(f) for f in sorted(glob.glob(jsonl_pattern))]
 
 if not DATASET_FILES:
-    raise ValueError(f"No JSON files found in {DATASET_PATH}")
+    raise ValueError(f"No JSONL files found in {DATASET_PATH}")
 
-print(f"Found {len(DATASET_FILES)} JSON file(s) in {DATASET_PATH}:")
+print(f"Found {len(DATASET_FILES)} JSONL file(s) in {DATASET_PATH}:")
 for f in DATASET_FILES:
     print(f"  - {f}")
 
@@ -35,8 +35,8 @@ LR = 2e-4
 MAX_LENGTH = 512
 
 # Extract character name from the first dataset filename
-# Expected format: YYYYMMDD_HHMM_novelName_Character_Name_raw.json
-dataset_parts = DATASET_FILES[0].replace("_raw.json", "").split("_")
+# Expected format: YYYYMMDD_HHMM_novelName_Character_Name_dataset.jsonl
+dataset_parts = DATASET_FILES[0].replace("_dataset.jsonl", "").split("_")
 # Character name is everything after the novel name (skip timestamp parts)
 character_name = "_".join(dataset_parts[3:])  # e.g., "Hercule_Poirot"
 
@@ -119,7 +119,13 @@ dataset = load_dataset(
 )
 
 def format_example(example):
-    text = example['text']
+    # Build ChatML format from instruction, input, and output fields
+    instruction = example.get('instruction', '')
+    user_input = example.get('input', '')
+    output = example.get('output', '')
+    
+    # Construct the ChatML formatted text
+    text = f"<|im_start|>system\n{instruction}<|im_end|>\n<|im_start|>user\n{user_input}<|im_end|>\n<|im_start|>assistant\n{output}<|im_end|>"
 
     tokenized = tokenizer(
         text,
