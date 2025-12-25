@@ -1,5 +1,6 @@
 import os
 import time
+import glob
 import torch
 from datasets import load_dataset
 from transformers import (
@@ -17,13 +18,16 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 MODEL_NAME = "Qwen/Qwen3-14B"
 DATASET_PATH = "./traniningData"
 
-# List of dataset files to use for training
-# You can add or remove files from this list
-DATASET_FILES = [
-    "20251208_2242_murderOfRogerAckroyd_Hercule_Poirot_raw.json",
-    "20251208_2242_murderOnTheOrientExpress_Hercule_Poirot_raw.json",
-    "20251208_2242_deathOnTheNile_Hercule_Poirot_raw.json",
-]
+# Automatically scan the trainingData folder for all JSON files
+json_pattern = os.path.join(DATASET_PATH, "*.json")
+DATASET_FILES = [os.path.basename(f) for f in sorted(glob.glob(json_pattern))]
+
+if not DATASET_FILES:
+    raise ValueError(f"No JSON files found in {DATASET_PATH}")
+
+print(f"Found {len(DATASET_FILES)} JSON file(s) in {DATASET_PATH}:")
+for f in DATASET_FILES:
+    print(f"  - {f}")
 
 EPOCHS = 2
 BATCH_SIZE = 1

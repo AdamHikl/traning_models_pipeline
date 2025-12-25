@@ -26,3 +26,6 @@ cmake --build build --config Release -j 16 (number of cpu cores)
 
 grab this model (hercule_poirot_Q4_K_M.gguf) and put it in "persona-chat\customModels" and create a corresponding modelFile
 
+ollama create hercule-poirot -f ModelfileHerculePoirot
+
+
