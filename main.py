@@ -15,7 +15,7 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 # -------------------------------
 # CONFIG
 # -------------------------------
-MODEL_NAME = "Qwen/Qwen3-14B"
+MODEL_NAME = "Qwen/Qwen3-8B"
 DATASET_PATH = "./traniningData"
 
 # Automatically scan the trainingData folder for all JSONL files
@@ -120,12 +120,23 @@ dataset = load_dataset(
 
 def format_example(example):
     # Build ChatML format from instruction, input, and output fields
-    instruction = example.get('instruction', '')
-    user_input = example.get('input', '')
-    output = example.get('output', '')
-    
-    # Construct the ChatML formatted text
-    text = f"<|im_start|>system\n{instruction}<|im_end|>\n<|im_start|>user\n{user_input}<|im_end|>\n<|im_start|>assistant\n{output}<|im_end|>"
+    if 'messages' in example:
+        # Handle MS-SWIFT format (list of dicts with role/content)
+        print("MS-SWIFT format detected")
+        messages = example['messages']
+        text = ""
+        for msg in messages:
+            role = msg.get('role', '')
+            content = msg.get('content', '')
+            text += f"<|im_start|>{role}\n{content}<|im_end|>\n"
+    else:
+        # Handle legacy format
+        instruction = example.get('instruction', '')
+        user_input = example.get('input', '')
+        output = example.get('output', '')
+        
+        # Construct the ChatML formatted text
+        text = f"<|im_start|>system\n{instruction}<|im_end|>\n<|im_start|>user\n{user_input}<|im_end|>\n<|im_start|>assistant\n{output}<|im_end|>\n"
 
     tokenized = tokenizer(
         text,
