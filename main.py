@@ -2,6 +2,7 @@ import os
 import time
 import glob
 import torch
+import argparse
 from datasets import load_dataset
 from transformers import (
     AutoTokenizer,
@@ -13,10 +14,17 @@ from transformers import (
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
 # -------------------------------
+# ARGUMENT PARSING
+# -------------------------------
+parser = argparse.ArgumentParser(description="Train a LoRA model on persona dataset")
+parser.add_argument("-m", "--model", type=str, default="Qwen/Qwen3-8B", help="Base model name (e.g., Qwen/Qwen3-8B)")
+args = parser.parse_args()
+
+# -------------------------------
 # CONFIG
 # -------------------------------
-MODEL_NAME = "Qwen/Qwen3-8B"
-DATASET_PATH = "./traniningData"
+MODEL_NAME = args.model
+DATASET_PATH = "./trainingData"
 
 # Automatically scan the trainingData folder for all JSONL files
 jsonl_pattern = os.path.join(DATASET_PATH, "*.jsonl")
@@ -47,7 +55,7 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M")
 # Create output directory with format: ./qwen3_lora_text/character_model_timestamp_
 # Extract just the model name (e.g., "Qwen3-14B") from the full path
 model_short_name = MODEL_NAME.split("/")[-1]
-OUTPUT_DIR = f"./output_adapters/{character_name}_{model_short_name}_{timestamp}_"
+OUTPUT_DIR = f"./output_adapters"
 
 # -------------------------------
 # BITSANDBYTES CONFIG (QLoRA)
@@ -120,23 +128,23 @@ dataset = load_dataset(
 
 def format_example(example):
     # Build ChatML format from instruction, input, and output fields
+    # Handle both new 'messages' format and legacy format
     if 'messages' in example:
-        # Handle MS-SWIFT format (list of dicts with role/content)
-        print("MS-SWIFT format detected")
         messages = example['messages']
-        text = ""
-        for msg in messages:
-            role = msg.get('role', '')
-            content = msg.get('content', '')
-            text += f"<|im_start|>{role}\n{content}<|im_end|>\n"
     else:
-        # Handle legacy format
-        instruction = example.get('instruction', '')
-        user_input = example.get('input', '')
-        output = example.get('output', '')
-        
-        # Construct the ChatML formatted text
-        text = f"<|im_start|>system\n{instruction}<|im_end|>\n<|im_start|>user\n{user_input}<|im_end|>\n<|im_start|>assistant\n{output}<|im_end|>\n"
+        print("Legacy format detected")
+        # Convert legacy format key-values to messages list
+        messages = [
+            {'role': 'system', 'content': example.get('instruction', '')},
+            {'role': 'user', 'content': example.get('input', '')},
+            {'role': 'assistant', 'content': example.get('output', '')}
+        ]
+    
+    text = ""
+    for msg in messages:
+        role = msg.get('role', '')
+        content = msg.get('content', '')
+        text += f"<|im_start|>{role}\n{content}<|im_end|>\n"
 
     tokenized = tokenizer(
         text,

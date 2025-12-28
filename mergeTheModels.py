@@ -1,8 +1,19 @@
 import torch
+import argparse
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
-BASE_MODEL = "Qwen/Qwen3-8B"   # <-- your base model
+# -------------------------------
+# ARGUMENT PARSING
+# -------------------------------
+parser = argparse.ArgumentParser(description="Merge LoRA adapter with base model")
+parser.add_argument("-m", "--model", type=str, default="Qwen/Qwen3-8B", help="Base model name (e.g., Qwen/Qwen3-8B)")
+args = parser.parse_args()
+
+# -------------------------------
+# CONFIG
+# -------------------------------
+BASE_MODEL = args.model
 LORA_PATH = "./output_adapters"           # <-- folder with adapter_model.safetensors
 OUT_DIR = "./merged_model"
 
