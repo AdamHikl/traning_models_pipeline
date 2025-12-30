@@ -1,10 +1,10 @@
 create a venv and install the following packages:
 
-pip isntall torch
-pip isntall transformers
-pip isntall datasets
-pip isntall peft
-pip isntall bitsandbytes
+pip install ollama
+pip install transformers
+pip install datasets
+pip install peft
+pip install bitsandbytes
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 
 
