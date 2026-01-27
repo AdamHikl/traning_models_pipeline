@@ -34,4 +34,4 @@ model = model.merge_and_unload()
 model.save_pretrained(OUT_DIR)
 tokenizer.save_pretrained(OUT_DIR)
 
-print("✅ LoRA merged and saved to", OUT_DIR)
+print("[OK] LoRA merged and saved to", OUT_DIR)
