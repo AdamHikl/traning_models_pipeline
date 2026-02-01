@@ -132,8 +132,8 @@ def format_example(example):
     if 'messages' in example:
         messages = example['messages']
     elif 'user' in example and 'assistant' in example:
-        # New raw format: {user, think, assistant, category}
-        # We explicitly ignore 'category' and format the assistant response with <think> tags
+        # New raw format: {user, think, assistant}
+        # Format the assistant response with <think> tags
         messages = [
             {'role': 'system', 'content': "You are a helpful assistant."},
             {'role': 'user', 'content': example['user']},
