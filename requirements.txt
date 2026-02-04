@@ -6,6 +6,7 @@ pip install datasets
 pip install peft
 pip install bitsandbytes
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
+pip install boto3
 
 
 instructions:
